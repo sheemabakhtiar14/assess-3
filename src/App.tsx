@@ -100,30 +100,8 @@ function App() {
     let riskDescription: string;
     let recommendations: string[];
 
-    if (highPercentage >= 50) {
-      overallRisk = "high";
-      riskDescription =
-        "Your responses indicate high vulnerability to online scams and digital threats.";
-      recommendations = [
-        "Always verify the authenticity of online offers and accounts",
-        "Never share personal information with unverified sources",
-        "Take time to research before making quick decisions online",
-        "Consult with trusted adults or friends before engaging with suspicious content",
-      ];
-    } else if (
-      mediumPercentage >= 40 ||
-      highPercentage + mediumPercentage >= 60
-    ) {
-      overallRisk = "medium";
-      riskDescription =
-        "You show moderate caution online but could benefit from enhanced digital awareness.";
-      recommendations = [
-        "Continue to verify sources but be more thorough in your checks",
-        "Trust your instincts when something seems too good to be true",
-        "Develop a habit of cross-referencing information from multiple sources",
-        "Stay updated on common online scam tactics",
-      ];
-    } else {
+    // Show low risk only if no medium or high risk responses were selected
+    if (riskCounts.high === 0 && riskCounts.medium === 0) {
       overallRisk = "low";
       riskDescription =
         "Excellent! You demonstrate strong digital safety awareness and critical thinking.";
@@ -132,6 +110,27 @@ function App() {
         "Share your knowledge with friends and family",
         "Stay informed about emerging digital threats",
         "Continue to trust your instincts and verify before acting",
+      ];
+    } else if (riskCounts.high > 0) {
+      overallRisk = "high";
+      riskDescription =
+        "Your responses indicate vulnerability to online scams and digital threats.";
+      recommendations = [
+        "Always verify the authenticity of online offers and accounts",
+        "Never share personal information with unverified sources",
+        "Take time to research before making quick decisions online",
+        "Consult with trusted adults or friends before engaging with suspicious content",
+      ];
+    } else {
+      // Has medium risk responses but no high risk
+      overallRisk = "medium";
+      riskDescription =
+        "You show some caution online but could benefit from enhanced digital awareness.";
+      recommendations = [
+        "Continue to verify sources but be more thorough in your checks",
+        "Trust your instincts when something seems too good to be true",
+        "Develop a habit of cross-referencing information from multiple sources",
+        "Stay updated on common online scam tactics",
       ];
     }
 
