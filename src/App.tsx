@@ -5,6 +5,7 @@ import { scenarios13_17 } from "./scenarios/scenarios13-17";
 import { scenarios18_30 } from "./scenarios/scenarios18-30";
 import { scenarios31_60 } from "./scenarios/scenarios31-60";
 import { scenarios61_90 } from "./scenarios/scenarios61-90";
+import { saveAssessmentResults, AssessmentData } from "./lib/supabase";
 
 interface UserInfo {
   name: string;
@@ -29,6 +30,8 @@ function App() {
   const [responses, setResponses] = useState<Response[]>([]);
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -58,14 +61,14 @@ function App() {
     }
   };
 
-  const handleResponseSelect = (optionIndex: number) => {
+  const handleResponseSelect = async (optionIndex: number) => {
     const scenario = scenarios[currentScenario];
     const selectedResponse = scenario.responses[optionIndex];
 
     setSelectedOption(optionIndex);
 
     // Wait briefly before proceeding to next scenario
-    setTimeout(() => {
+    setTimeout(async () => {
       const newResponse: Response = {
         scenarioId: scenario.id,
         selectedOption: optionIndex,
@@ -79,6 +82,48 @@ function App() {
         setCurrentScenario(currentScenario + 1);
         setSelectedOption(null);
       } else {
+        // Assessment completed - save to Supabase
+        setIsSaving(true);
+        setSaveError(null);
+
+        try {
+          // Calculate risk counts for the completed assessment
+          const riskCounts = { high: 0, medium: 0, low: 0 };
+          updatedResponses.forEach((response) => {
+            riskCounts[response.riskLevel]++;
+          });
+
+          // Calculate overall risk using the same logic as the report
+          let overallRisk: "high" | "medium" | "low";
+          if (riskCounts.high === 0 && riskCounts.medium === 0) {
+            overallRisk = "low";
+          } else if (riskCounts.high > 0) {
+            overallRisk = "high";
+          } else {
+            overallRisk = "medium";
+          }
+
+          // Prepare data for Supabase
+          const assessmentData: AssessmentData = {
+            name: userInfo.name,
+            age: userInfo.age,
+            language: userInfo.language,
+            high_risk: riskCounts.high,
+            medium_risk: riskCounts.medium,
+            low_risk: riskCounts.low,
+            over_all_risk: overallRisk,
+          };
+
+          // Save to Supabase
+          await saveAssessmentResults(assessmentData);
+          console.log("Assessment data saved successfully!");
+        } catch (error) {
+          console.error("Failed to save assessment data:", error);
+          setSaveError("Failed to save your results. Please try again.");
+        } finally {
+          setIsSaving(false);
+        }
+
         setPhase("report");
         setSelectedOption(null);
       }
@@ -176,7 +221,7 @@ function App() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Digital Habits Assessment
               </h1>
-           </div>
+            </div>
           </div>
         </div>
       </header>
@@ -196,8 +241,7 @@ function App() {
                   Welcome
                 </h2>
                 <p className="text-slate-300 text-xl leading-relaxed max-w-lg mx-auto">
-                  Discover how well you navigate the digital world 
-                  
+                  Discover how well you navigate the digital world
                 </p>
               </div>
 
