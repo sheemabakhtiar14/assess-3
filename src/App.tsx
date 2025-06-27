@@ -6,6 +6,8 @@ import { scenarios18_30 } from "./scenarios/scenarios18-30";
 import { scenarios31_60 } from "./scenarios/scenarios31-60";
 import { scenarios61_90 } from "./scenarios/scenarios61-90";
 import { saveAssessmentResults, AssessmentData } from "./lib/supabase";
+import { getTranslation } from "./translations";
+import { getTranslatedScenarios } from "./scenarios/translations";
 
 interface UserInfo {
   name: string;
@@ -33,6 +35,9 @@ function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Get current language translations
+  const t = getTranslation(userInfo.language);
+
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
@@ -40,24 +45,60 @@ function App() {
   const handleUserInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (userInfo.name && userInfo.age > 0) {
-      // Set scenarios based on age
-      if (userInfo.age >= 13 && userInfo.age <= 17) {
-        setScenarios(scenarios13_17);
-      } else if (userInfo.age >= 18 && userInfo.age <= 30) {
-        setScenarios(scenarios18_30);
-      } else if (userInfo.age >= 31 && userInfo.age <= 60) {
-        setScenarios(scenarios31_60);
-      } else if (userInfo.age >= 61 && userInfo.age <= 90) {
-        setScenarios(scenarios61_90);
-      } else {
-        // For ages outside our ranges, use the closest age group
-        if (userInfo.age < 13) {
-          setScenarios(scenarios13_17);
+      // Check if we have translated scenarios for this language
+      if (
+        userInfo.language === "Hindi" ||
+        userInfo.language === "Telugu" ||
+        userInfo.language === "Urdu"
+      ) {
+        let ageGroup = "";
+        if (userInfo.age >= 13 && userInfo.age <= 17) {
+          ageGroup = "13-17";
+        } else if (userInfo.age >= 18 && userInfo.age <= 30) {
+          ageGroup = "18-30";
+        } else if (userInfo.age >= 31 && userInfo.age <= 60) {
+          ageGroup = "31-60";
+        } else if (userInfo.age >= 61 && userInfo.age <= 90) {
+          ageGroup = "61-90";
         } else {
-          setScenarios(scenarios61_90);
+          ageGroup = userInfo.age < 13 ? "13-17" : "61-90";
         }
+
+        const translatedScenarios = getTranslatedScenarios(
+          ageGroup,
+          userInfo.language
+        );
+        if (translatedScenarios.length > 0) {
+          setScenarios(translatedScenarios as Scenario[]);
+        } else {
+          // Fallback to English scenarios
+          setEnglishScenarios();
+        }
+      } else {
+        // Use English scenarios
+        setEnglishScenarios();
       }
       setPhase("survey");
+    }
+  };
+
+  const setEnglishScenarios = () => {
+    // Set scenarios based on age
+    if (userInfo.age >= 13 && userInfo.age <= 17) {
+      setScenarios(scenarios13_17);
+    } else if (userInfo.age >= 18 && userInfo.age <= 30) {
+      setScenarios(scenarios18_30);
+    } else if (userInfo.age >= 31 && userInfo.age <= 60) {
+      setScenarios(scenarios31_60);
+    } else if (userInfo.age >= 61 && userInfo.age <= 90) {
+      setScenarios(scenarios61_90);
+    } else {
+      // For ages outside our ranges, use the closest age group
+      if (userInfo.age < 13) {
+        setScenarios(scenarios13_17);
+      } else {
+        setScenarios(scenarios61_90);
+      }
     }
   };
 
@@ -148,35 +189,17 @@ function App() {
     // Show low risk only if no medium or high risk responses were selected
     if (riskCounts.high === 0 && riskCounts.medium === 0) {
       overallRisk = "low";
-      riskDescription =
-        "Excellent! You demonstrate strong digital safety awareness and critical thinking.";
-      recommendations = [
-        "Keep up your vigilant approach to online safety",
-        "Share your knowledge with friends and family",
-        "Stay informed about emerging digital threats",
-        "Continue to trust your instincts and verify before acting",
-      ];
+      riskDescription = t.lowRiskDescription;
+      recommendations = t.lowRiskRecommendations;
     } else if (riskCounts.high > 0) {
       overallRisk = "high";
-      riskDescription =
-        "Your responses indicate vulnerability to online scams and digital threats.";
-      recommendations = [
-        "Always verify the authenticity of online offers and accounts",
-        "Never share personal information with unverified sources",
-        "Take time to research before making quick decisions online",
-        "Consult with trusted adults or friends before engaging with suspicious content",
-      ];
+      riskDescription = t.highRiskDescription;
+      recommendations = t.highRiskRecommendations;
     } else {
       // Has medium risk responses but no high risk
       overallRisk = "medium";
-      riskDescription =
-        "You show some caution online but could benefit from enhanced digital awareness.";
-      recommendations = [
-        "Continue to verify sources but be more thorough in your checks",
-        "Trust your instincts when something seems too good to be true",
-        "Develop a habit of cross-referencing information from multiple sources",
-        "Stay updated on common online scam tactics",
-      ];
+      riskDescription = t.mediumRiskDescription;
+      recommendations = t.mediumRiskRecommendations;
     }
 
     return {
@@ -219,7 +242,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent header-title">
-                Digital Habits Assessment
+                {t.appTitle}
               </h1>
             </div>
           </div>
@@ -238,10 +261,10 @@ function App() {
                   <Users className="h-12 w-12 text-white welcome-inner-icon" />
                 </div>
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4 welcome-title">
-                  Welcome
+                  {t.welcome}
                 </h2>
                 <p className="text-slate-300 text-xl leading-relaxed max-w-lg mx-auto welcome-subtitle">
-                  Discover how well you navigate the digital world
+                  {t.welcomeSubtitle}
                 </p>
               </div>
 
@@ -251,7 +274,7 @@ function App() {
               >
                 <div className="space-y-3 form-group">
                   <label className="block text-lg font-semibold text-slate-200 form-label">
-                    What's your name?
+                    {t.nameLabel}
                   </label>
                   <input
                     type="text"
@@ -261,13 +284,13 @@ function App() {
                       setUserInfo({ ...userInfo, name: e.target.value })
                     }
                     className="w-full px-6 py-5 border-2 border-slate-600/50 rounded-2xl focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 bg-slate-800/50 text-white placeholder-slate-400 transition-all duration-300 text-lg backdrop-blur-sm hover:bg-slate-800/70 form-input"
-                    placeholder="Enter your name"
+                    placeholder={t.namePlaceholder}
                   />
                 </div>
 
                 <div className="space-y-3 form-group">
                   <label className="block text-lg font-semibold text-slate-200 form-label">
-                    How old are you?
+                    {t.ageLabel}
                   </label>
                   <input
                     type="number"
@@ -282,13 +305,13 @@ function App() {
                       })
                     }
                     className="w-full px-6 py-5 border-2 border-slate-600/50 rounded-2xl focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 bg-slate-800/50 text-white placeholder-slate-400 transition-all duration-300 text-lg backdrop-blur-sm hover:bg-slate-800/70 form-input"
-                    placeholder="Enter your age"
+                    placeholder={t.agePlaceholder}
                   />
                 </div>
 
                 <div className="space-y-3 form-group">
                   <label className="block text-lg font-semibold text-slate-200 form-label">
-                    Preferred Language
+                    {t.languageLabel}
                   </label>
                   <select
                     value={userInfo.language}
@@ -308,7 +331,7 @@ function App() {
                   type="submit"
                   className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1 hover:scale-[1.02] text-lg relative overflow-hidden group welcome-submit-button"
                 >
-                  <span className="relative z-10">Begin Your Assessment →</span>
+                  <span className="relative z-10">{t.beginAssessment}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </button>
               </form>
@@ -323,10 +346,10 @@ function App() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 space-y-2 sm:space-y-0">
                 <div>
                   <h3 className="text-xl md:text-2xl font-bold text-white mb-1 md:mb-2">
-                    Assessment Progress
+                    {t.assessmentProgress}
                   </h3>
                   <p className="text-slate-400 text-base md:text-lg">
-                    Question {currentScenario + 1} of {scenarios.length}
+                    {t.question} {currentScenario + 1} of {scenarios.length}
                   </p>
                 </div>
                 <div className="text-left sm:text-right">
@@ -336,7 +359,7 @@ function App() {
                     )}
                     %
                   </div>
-                  <div className="text-slate-400 text-sm">Complete</div>
+                  <div className="text-slate-400 text-sm">{t.complete}</div>
                 </div>
               </div>
               <div className="relative">
@@ -390,7 +413,7 @@ function App() {
                     <span className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3 md:mr-4 text-xs md:text-sm font-bold scenario-question-icon">
                       ?
                     </span>
-                    What would you do?
+                    {t.whatWouldYouDo}
                   </h4>
                   {scenarios[currentScenario].responses.map(
                     (response, index) => (
@@ -442,7 +465,7 @@ function App() {
                     <div className="text-center py-4">
                       <div className="inline-flex items-center space-x-2 text-blue-400">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
-                        <span className="text-lg">Saving your results...</span>
+                        <span className="text-lg">{t.savingResults}</span>
                       </div>
                     </div>
                   )}
@@ -450,7 +473,7 @@ function App() {
                   {/* Error State */}
                   {saveError && (
                     <div className="bg-red-500/20 border border-red-400/30 rounded-2xl p-4 text-center">
-                      <p className="text-red-200 text-lg">{saveError}</p>
+                      <p className="text-red-200 text-lg">{t.saveError}</p>
                     </div>
                   )}
                 </div>
@@ -486,10 +509,10 @@ function App() {
                         )}
                       </div>
                       <h2 className="text-5xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4 report-title">
-                        Your Digital Safety Report
+                        {t.digitalSafetyReport}
                       </h2>
                       <p className="text-slate-300 text-xl mb-8 report-subtitle">
-                        Based on your responses to {responses.length} scenarios
+                        {t.basedOnResponses} {responses.length} scenarios
                       </p>
 
                       {/* Risk Level Badge */}
@@ -502,7 +525,7 @@ function App() {
                             : "bg-green-500/20 text-green-200 border border-green-400/30"
                         }`}
                       >
-                        Overall Risk Level:{" "}
+                        {t.overallRiskLevel}{" "}
                         {report.overallRisk.charAt(0).toUpperCase() +
                           report.overallRisk.slice(1)}
                       </div>
@@ -528,7 +551,7 @@ function App() {
                           : "text-green-200"
                       }`}
                     >
-                      Assessment Results
+                      {t.assessmentResults}
                     </h3>
                     <p
                       className={`text-xl leading-relaxed risk-item-text ${
@@ -546,7 +569,7 @@ function App() {
                   {/* Response Breakdown */}
                   <div className="bg-white/10 dark:bg-slate-800/20 backdrop-blur-2xl rounded-[2rem] shadow-2xl p-12 border border-white/20 dark:border-slate-700/30 report-card">
                     <h3 className="text-3xl font-bold text-white mb-8 text-center risk-summary-title">
-                      Response Breakdown
+                      {t.responseBreakdown}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 risk-summary-grid">
                       <div className="bg-red-500/10 backdrop-blur-sm p-8 rounded-3xl border-2 border-red-400/30 text-center transform hover:scale-105 transition-transform duration-300 risk-item">
@@ -554,7 +577,7 @@ function App() {
                           {report.riskCounts.high}
                         </div>
                         <div className="text-2xl font-bold text-red-300 mb-2 risk-item-text">
-                          High Risk
+                          {t.highRisk}
                         </div>
                         <div className="text-lg text-red-400 risk-item-text">
                           {report.percentages.high.toFixed(1)}%
@@ -565,7 +588,7 @@ function App() {
                           {report.riskCounts.medium}
                         </div>
                         <div className="text-2xl font-bold text-yellow-300 mb-2 risk-item-text">
-                          Medium Risk
+                          {t.mediumRisk}
                         </div>
                         <div className="text-lg text-yellow-400 risk-item-text">
                           {report.percentages.medium.toFixed(1)}%
@@ -576,7 +599,7 @@ function App() {
                           {report.riskCounts.low}
                         </div>
                         <div className="text-2xl font-bold text-green-300 mb-2 risk-item-text">
-                          Low Risk
+                          {t.lowRisk}
                         </div>
                         <div className="text-lg text-green-400 risk-item-text">
                           {report.percentages.low.toFixed(1)}%
@@ -588,7 +611,7 @@ function App() {
                   {/* Recommendations */}
                   <div className="bg-white/10 dark:bg-slate-800/20 backdrop-blur-2xl rounded-[2rem] shadow-2xl p-12 border border-white/20 dark:border-slate-700/30 report-card recommendations-container">
                     <h3 className="text-3xl font-bold text-white mb-8 text-center recommendation-title">
-                      🛡️ Personalized Recommendations
+                      {t.personalizedRecommendations}
                     </h3>
                     <div className="grid gap-6 recommendations-grid">
                       {report.recommendations.map((recommendation, index) => (
@@ -610,13 +633,13 @@ function App() {
                   {/* Action Buttons */}
                   <div className="text-center bg-white/10 dark:bg-slate-800/20 backdrop-blur-2xl rounded-[2rem] shadow-2xl p-12 border border-white/20 dark:border-slate-700/30 report-card">
                     <h3 className="text-2xl font-bold text-white mb-6 recommendation-title">
-                      Ready for another assessment?
+                      {t.readyForAnother}
                     </h3>
                     <button
                       onClick={resetSurvey}
                       className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white font-bold py-6 px-12 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1 hover:scale-[1.05] text-xl primary-button"
                     >
-                      Take Assessment Again →
+                      {t.takeAssessmentAgain}
                     </button>
                   </div>
                 </div>
