@@ -98,3 +98,264 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(59, 130, 246, 0.5);
 }
+
+/* Desktop-only font size and spacing optimizations */
+@media (min-width: 1024px) {
+  /* Header adjustments */
+  .header-title {
+    font-size: 1.5rem !important; /* Reduced from text-2xl */
+  }
+
+  .header-icon {
+    height: 1.5rem !important;
+    width: 1.5rem !important; /* Reduced from h-7 w-7 */
+  }
+
+  .header-container {
+    padding: 1rem 1.5rem !important; /* Reduced from py-5 px-6 */
+  }
+
+  /* Main content adjustments */
+  .main-container {
+    padding: 1.5rem 1.5rem !important; /* Much more reduced from py-16 px-6 */
+  }
+
+  /* Welcome section - Make it much more compact */
+  .welcome-title {
+    font-size: 2rem !important; /* Further reduced from text-4xl */
+    margin-bottom: 0.5rem !important;
+  }
+
+  .welcome-subtitle {
+    font-size: 1.125rem !important; /* Increased for better readability */
+    margin-bottom: 1rem !important; /* Reduced bottom margin */
+  }
+
+  .welcome-icon {
+    width: 3rem !important;
+    height: 3rem !important; /* Further reduced from w-24 h-24 */
+    margin-bottom: 1rem !important; /* Reduced bottom margin */
+  }
+
+  .welcome-inner-icon {
+    height: 1.5rem !important;
+    width: 1.5rem !important; /* Further reduced from h-12 w-12 */
+  }
+
+  .welcome-card {
+    padding: 1.5rem !important; /* Much more reduced from p-12 */
+    max-width: 28rem !important; /* Limit horizontal width */
+    margin: 0 auto !important; /* Center the card */
+  }
+
+  /* Welcome section specific adjustments */
+  .welcome-text-section {
+    margin-bottom: 1.5rem !important; /* Reduced from mb-12 */
+  }
+
+  /* Welcome container width adjustment */
+  .welcome-container {
+    max-width: 32rem !important; /* Reduced from max-w-2xl (36rem) */
+  }
+
+  /* Form spacing adjustments */
+  .form-container {
+    gap: 1rem !important; /* Reduced from space-y-8 */
+  }
+
+  .form-group {
+    gap: 0.5rem !important; /* Reduced from space-y-3 */
+  }
+
+  /* Form elements */
+  .form-input {
+    padding: 0.75rem 1rem !important; /* Further reduced from px-6 py-5 */
+    font-size: 1rem !important; /* Increased for better readability */
+  }
+
+  .form-label {
+    font-size: 1rem !important; /* Increased for better readability */
+  }
+
+  /* Button adjustments */
+  .primary-button {
+    padding: 0.75rem 1.5rem !important; /* Further reduced button padding */
+    font-size: 0.875rem !important; /* Reduced font size */
+  }
+
+  .welcome-submit-button {
+    padding: 0.875rem 1.5rem !important; /* Reduced from py-6 px-8 */
+    font-size: 1rem !important; /* Reduced from text-lg */
+  }
+
+  /* Progress bar container */
+  .progress-container {
+    padding: 1rem !important; /* Reduced spacing */
+  }
+
+  /* Scenario cards */
+  .scenario-card {
+    padding: 1.5rem !important; /* Further reduced from p-12 for desktop */
+    max-width: 48rem !important; /* Limit horizontal width */
+    margin: 0 auto !important; /* Center the card */
+  }
+
+  .scenario-title {
+    font-size: 1.75rem !important; /* Further reduced from text-4xl */
+    margin-bottom: 1rem !important; /* Reduced margin */
+  }
+
+  .scenario-description {
+    font-size: 1rem !important; /* Increased for better readability */
+    margin-bottom: 0.75rem !important; /* Reduced margin */
+    line-height: 1.5 !important; /* Better line spacing */
+  }
+
+  .scenario-question {
+    font-size: 1.25rem !important; /* Increased for better readability */
+    margin-bottom: 1rem !important; /* Reduced margin */
+  }
+
+  .scenario-question-icon {
+    width: 1.25rem !important;
+    height: 1.25rem !important; /* Further reduced from w-8 h-8 */
+    margin-right: 0.5rem !important; /* Reduced margin */
+  }
+
+  /* Scenario container adjustments */
+  .scenario-container {
+    max-width: 52rem !important; /* Limit overall container width */
+  }
+
+  /* Response buttons */
+  .response-button {
+    padding: 1rem !important; /* Further reduced from p-8 */
+    margin-bottom: 0.75rem !important; /* Reduced spacing between buttons */
+  }
+
+  .response-letter {
+    width: 2rem !important;
+    height: 2rem !important; /* Further reduced from w-12 h-12 */
+    font-size: 0.875rem !important; /* Reduced font size */
+    margin-right: 0.75rem !important; /* Reduced margin */
+  }
+
+  .response-text {
+    font-size: 1rem !important; /* Increased for better readability */
+    line-height: 1.5 !important; /* Better line spacing */
+  }
+
+  /* Response container adjustments */
+  .response-container {
+    gap: 0.75rem !important; /* Reduced gap between response options */
+  }
+
+  /* Report section */
+  .report-card {
+    padding: 1rem !important; /* Much more reduced from p-12 */
+    max-width: 48rem !important; /* Limit horizontal width */
+    margin: 0 auto 1rem auto !important; /* Center the card with reduced bottom margin */
+  }
+
+  .report-icon {
+    width: 3rem !important;
+    height: 3rem !important; /* Much smaller icon */
+    margin-bottom: 0.5rem !important; /* Very reduced margin */
+  }
+
+  .report-icon-inner {
+    height: 1.5rem !important;
+    width: 1.5rem !important; /* Much smaller inner icon */
+  }
+
+  .report-title {
+    font-size: 2rem !important; /* Much more compact title */
+    margin-bottom: 0.5rem !important; /* Very reduced margin */
+  }
+
+  .report-subtitle {
+    font-size: 1rem !important; /* Compact but readable */
+    margin-bottom: 0.75rem !important; /* Very reduced margin */
+  }
+
+  .report-badge {
+    padding: 0.5rem 1rem !important; /* Much more compact badge */
+    font-size: 1rem !important; /* Readable but compact */
+    margin-bottom: 1rem !important; /* Reduced bottom margin */
+  }
+
+  /* Report container adjustments */
+  .report-container {
+    max-width: 52rem !important; /* Limit overall container width */
+  }
+
+  /* Report text section compact */
+  .report-text-section {
+    margin-bottom: 1rem !important; /* Much reduced from default */
+  }
+
+  /* Risk summary cards */
+  .risk-summary-title {
+    font-size: 1.125rem !important; /* Compact title */
+    margin-bottom: 0.5rem !important; /* Much reduced margin */
+  }
+
+  .risk-item {
+    padding: 0.5rem !important; /* Much more compact padding */
+    margin-bottom: 0.25rem !important; /* Reduced spacing between items */
+  }
+
+  .risk-item-text {
+    font-size: 0.875rem !important; /* Maintained readable size */
+    line-height: 1.3 !important; /* Tighter line spacing */
+  }
+
+  /* Risk summary grid compact */
+  .risk-summary-grid {
+    gap: 1rem !important; /* Reduced gap between risk cards */
+    margin-bottom: 1rem !important; /* Reduced bottom margin */
+  }
+
+  /* Risk summary container */
+  .risk-summary-container {
+    margin-bottom: 1rem !important; /* Much reduced spacing */
+  }
+
+  /* Recommendation cards */
+  .recommendation-card {
+    padding: 1rem !important; /* Much more compact padding */
+    margin-bottom: 0.75rem !important; /* Reduced spacing between cards */
+  }
+
+  .recommendation-title {
+    font-size: 1rem !important; /* More compact but readable */
+    margin-bottom: 0.5rem !important; /* Much reduced margin */
+  }
+
+  .recommendation-text {
+    font-size: 0.875rem !important; /* Maintained readable size */
+    line-height: 1.3 !important; /* Tighter line spacing */
+  }
+
+  /* Recommendation section container */
+  .recommendations-container {
+    margin-top: 1rem !important; /* Reduced top spacing */
+  }
+
+  /* Recommendation grid compact */
+  .recommendations-grid {
+    gap: 0.75rem !important; /* Reduced gap between recommendation cards */
+  }
+
+  /* Button adjustments */
+  .primary-button {
+    padding: 0.75rem 2rem !important; /* Reduced button padding */
+    font-size: 1rem !important;
+  }
+
+  /* Badge and tag adjustments */
+  .theme-badge {
+    padding: 0.5rem 1rem !important; /* Reduced badge padding */
+    font-size: 0.75rem !important;
+  }
+}
