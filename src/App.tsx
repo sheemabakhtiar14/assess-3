@@ -397,9 +397,12 @@ function App() {
                       <button
                         key={index}
                         onClick={() => handleResponseSelect(index)}
+                        disabled={isSaving}
                         className={`w-full text-left p-4 md:p-8 border-2 rounded-2xl md:rounded-3xl transition-all duration-300 group relative overflow-hidden response-button ${
                           selectedOption === index
                             ? "border-green-400 bg-green-500/20 transform scale-[1.02] shadow-2xl shadow-green-500/20"
+                            : isSaving
+                            ? "border-slate-700 bg-slate-800/50 opacity-50 cursor-not-allowed"
                             : "border-slate-600/50 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/10 hover:shadow-2xl hover:shadow-blue-500/10 hover:transform hover:scale-[1.01] backdrop-blur-sm"
                         }`}
                       >
@@ -432,6 +435,23 @@ function App() {
                         )}
                       </button>
                     )
+                  )}
+
+                  {/* Loading State */}
+                  {isSaving && (
+                    <div className="text-center py-4">
+                      <div className="inline-flex items-center space-x-2 text-blue-400">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
+                        <span className="text-lg">Saving your results...</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error State */}
+                  {saveError && (
+                    <div className="bg-red-500/20 border border-red-400/30 rounded-2xl p-4 text-center">
+                      <p className="text-red-200 text-lg">{saveError}</p>
+                    </div>
                   )}
                 </div>
               </div>
